@@ -18,8 +18,8 @@ export class IJitsiConference {
         return this;
     }
 
-    init() {
-        const room = this.JitsiConnection.initJitsiConference('shivanikanal1', confOptions);
+    init(JITSI_ROOM_NAME) {
+        const room = this.JitsiConnection.initJitsiConference(JITSI_ROOM_NAME, confOptions);
         // this.JitsiTrack = new IJitsiTrack(this.JitsiMeetJS, this.JitsiConnection, room);
         // this.initTracks();
         room.on(this.JitsiMeetJS.events.conference.TRACK_ADDED, this.onRemoteTrackAdd.bind(this));
@@ -41,8 +41,12 @@ export class IJitsiConference {
         room.on(
             this.JitsiMeetJS.events.conference.PHONE_NUMBER_CHANGED,
             () => logThis(`${room.getPhoneNumber()} - ${room.getPhonePin()}`));
+
+        // set video quality constraints
+        room.setReceiverVideoConstraint(1080);
+        room.setSenderVideoConstraint(1080);
+
         room.join()
-        console.log({room});
         this.conference = room;
 
 

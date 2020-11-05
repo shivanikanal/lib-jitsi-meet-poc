@@ -13,7 +13,10 @@ export class IJitsiTrack {
     }
 
     createLocalTrack() {
-        this.JitsiMeetJS.createLocalTracks({ devices: [ 'audio', 'video' ] })
+        this.JitsiMeetJS.createLocalTracks({ 
+            devices: [ 'audio', 'video' ],
+            facingMode: 'user'
+        })
         .then((tracks) => {
             this.localTracks = this.onLocalTracksInit(tracks);
             return this.localTracks;
@@ -41,13 +44,15 @@ export class IJitsiTrack {
                     console.log(
                         `track audio output device was changed to ${deviceId}`));
             if (this.localTracks[i].getType() === 'video') {
-                if($(`#localVideo${i}`).length < 1) {
-                    $('#jitsi-tracks').append(`<video autoplay='1' id='localVideo${i}' style='width:180px; height: 300px; object-fit:cover; margin: 10px'/>`);
-                    this.localTracks[i].attach($(`#localVideo${i}`)[0]);
-                }
+                this.createVideoTrackUI(`localVideo${i}`);
+                // if($(`#localVideo${i}`).length < 1) {
+                //     $('#jitsi-video-tracks').append(`<video autoplay='1' id='localVideo${i}' style='width:180px; height: 300px; object-fit:cover; margin: 10px'/>`);
+                //     this.localTracks[i].attach($(`#localVideo${i}`)[0]);
+                // }
+                this.localTracks[i].attach($(`#localVideo${i}`)[0]);
             } else {
                 if($(`#localAudio${i}`).length < 1) {
-                    $('#jitsi-tracks').append(
+                    $('#jitsi-audio-tracks').append(
                         `<audio autoplay='1' muted='true' id='localAudio${i}' />`);
                     this.localTracks[i].attach($(`#localAudio${i}`)[0]);
                 }
@@ -85,17 +90,27 @@ export class IJitsiTrack {
                     `track audio output device was changed to ${deviceId}`));
         const id = participant + track.getType() + idx;
         if (track.getType() === 'video') {
-            if($(`#${participant}video${idx}`).length <= 0) {
-                $('#jitsi-tracks').append(
-                    `<video autoplay='1' id='${participant}video${idx}' style='width:180px; height: 300px; object-fit:cover; margin: 10px' />`);
-            }
+            this.createVideoTrackUI(`${participant}video${idx}`);
         } else {
             if($(`#${participant}audio${idx}`).length <= 0) {
-                $('#jitsi-tracks').append(
+                $('#jitsi-audio-tracks').append(
                     `<audio autoplay='1' id='${participant}audio${idx}' />`);
             }
         }
         track.attach($(`#${id}`)[0]);
+    }
+
+    createVideoTrackUI(DOMId) {
+        if($(`#${DOMId}`).length <= 0) {
+            $('#jitsi-video-tracks').append(
+                `<div id="video-container-${DOMId}" class="video-container" style="display:inline-block; vertical-align:middle;">
+                    <video autoplay='1' id='${DOMId}' style='width:200px; height: 140px; object-fit:cover; margin: 10px; transform:rotateY(180deg)'></video>
+                    <button class="microphone-btn" id='${DOMId}-microphone'>Mute</button>
+                    <button class="camera-btn" id='${DOMId}-camera'>Camera</button>
+                </div>
+                `
+            );
+        }
     }
 
     removeRemoteTrack(track) {
@@ -114,10 +129,10 @@ export class IJitsiTrack {
         track.removeEventListener(this.JitsiMeetJS.events.track.LOCAL_TRACK_STOPPED, () => {});
         track.removeEventListener(this.JitsiMeetJS.events.track.TRACK_AUDIO_OUTPUT_CHANGED, () => {});
         if (track.getType() === 'video') {
-            // $(`#jitsi-tracks #${participant}video${idx}`).remove();
-            $(`video[id^='${participant}video']`).remove();
+            // $(`video[id^='${participant}video']`).remove();
+            $(`div[id^='video-container-${participant}video']`).remove();
         } else {
-            // $(`#jitsi-tracks #${participant}audio${idx}`).remove();
+            // $(`audio[id^='${participant}audio']`).remove();
             $(`audio[id^='${participant}audio']`).remove();
         }
         track.detach(track.containers[0]);

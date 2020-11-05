@@ -3,6 +3,21 @@
     <head>
         <meta charset="UTF-8">
         <title>Jisti Lib POC</title>
+        <style>
+            .video-container {
+                position:relative;
+            }
+            .video-container .microphone-btn {
+                position: absolute;
+                top: 0;
+                right: 100px;
+            }
+            .video-container .camera-btn {
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+        </style>
         <script src="../libs/jquery-2.1.1.min.js"></script>
         <!-- <script src="../libs/strophe/strophe.js"></script>
         <script src="../libs/strophe/strophe.disco.min.js?v=1"></script> -->
@@ -15,7 +30,10 @@
     <body>
         <div id="jitsi-room" style="display: none;">
             JITSI ROOM
-            <div id="jitsi-tracks"></div>
+            <div id="jitsi-tracks">
+                <div id="jitsi-video-tracks"></div>
+                <div id="jitsi-audio-tracks"></div>
+            </div>
         </div>
     </body>
 </html>

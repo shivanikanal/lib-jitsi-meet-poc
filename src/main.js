@@ -4,13 +4,14 @@ import { IJitsiTrack } from "./i-jitsi-track";
 
 let JitsiMeet;
 let JitsiConnection;
+const JITSI_ROOM_NAME = 'shivanikanal4';
 const connectionOptions = {
     hosts: {
         domain: 'jitsi.insider.in',
         muc: 'conference.jitsi.insider.in' // FIXME: use XEP-0030
     },
-    bosh: 'https://jitsi.insider.in/http-bind?room=shivanikanal1',
-    serviceUrl: 'https://jitsi.insider.in/http-bind?room=shivanikanal1',
+    bosh: `https://jitsi.insider.in/http-bind?room=${JITSI_ROOM_NAME}`,
+    serviceUrl: `https://jitsi.insider.in/http-bind?room=${JITSI_ROOM_NAME}`,
     // The name of client node advertised in XEP-0115 'c' stanza
     clientNode: 'http://jitsi.org/jitsimeet',
     openBridgeChannel: true,
@@ -23,9 +24,7 @@ const onConnectionSuccess = () => {
     console.log('Jitsi Connection Success');
     $('#jitsi-room').show();
     const jitsiConf = new IJitsiConference(JitsiMeetJS, JitsiConnection);
-    const room = jitsiConf.init();
-    // const jitsiTrack = new IJitsiTrack(JitsiMeetJS, JitsiConnection, room);
-    // const localTracks = jitsiTrack.createLocalTrack();
+    const room = jitsiConf.init(JITSI_ROOM_NAME);
     window.myConf = room;
     window.myJitsiMeetJS = JitsiMeetJS;
     window.myJitsiConnection = JitsiConnection;
